@@ -23,22 +23,28 @@ jobs:
         with:
           go-version: '1.21' # 你可以根据需要更改 Go 版本
 
-      # 步骤 3: 编译 Linux 版本
-      - name: Build for Linux
-        run: go build -v -o go-socket-linux main.go
+      # 步骤 3: 交叉编译所有主流平台版本
+      - name: Build for Linux (amd64)
+        run: GOOS=linux GOARCH=amd64 go build -v -o go-socket-linux-amd64 main.go
 
-      # 步骤 4: 编译 Windows 版本
-      - name: Build for Windows
-        env:
-          GOOS: windows
-          GOARCH: amd64
-        run: go build -v -o go-socket-windows.exe main.go
+      - name: Build for Linux (arm64)
+        run: GOOS=linux GOARCH=arm64 go build -v -o go-socket-linux-arm64 main.go
 
-      # 步骤 5: 创建 Release 并上传编译好的程序
+      - name: Build for Windows (amd64)
+        run: GOOS=windows GOARCH=amd64 go build -v -o go-socket-windows-amd64.exe main.go
+      
+      - name: Build for Windows (arm64)
+        run: GOOS=windows GOARCH=arm64 go build -v -o go-socket-windows-arm64.exe main.go
+
+      - name: Build for macOS (amd64 - Intel)
+        run: GOOS=darwin GOARCH=amd64 go build -v -o go-socket-darwin-amd64 main.go
+
+      - name: Build for macOS (arm64 - Apple Silicon)
+        run: GOOS=darwin GOARCH=arm64 go build -v -o go-socket-darwin-arm64 main.go
+
+      # 步骤 4: 创建 Release 并上传所有编译好的程序
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          # 要上传的文件路径，支持通配符
-          files: |
-            go-socket-linux
-            go-socket-windows.exe
+          # 使用通配符上传所有以 'go-socket-' 开头的文件
+          files: go-socket-*
