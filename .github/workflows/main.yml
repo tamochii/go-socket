@@ -11,6 +11,8 @@ jobs:
   build-and-release:
     # 作业在最新的 Ubuntu 运行器上运行
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       # 步骤 1: 检出你的仓库代码
       - uses: actions/checkout@v4
