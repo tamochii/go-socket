@@ -1,0 +1,34 @@
+# 工作流的名称
+name: Build Go App
+
+# 仅在推送到 main 分支时触发
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    # 作业在最新的 Ubuntu 运行器上运行
+    runs-on: ubuntu-latest
+    steps:
+      # 步骤 1: 检出你的仓库代码
+      - uses: actions/checkout@v4
+
+      # 步骤 2: 设置 Go 环境
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21' # 你可以根据需要更改 Go 版本
+
+      # 步骤 3: 编译 main.go，并将输出文件命名为 main 放在根目录
+      - name: Build
+        run: go build -v -o main main.go
+
+      # 步骤 4: 上传编译好的程序作为 artifact
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # artifact 的名称
+          name: go-app
+          # 要上传的文件路径
+          path: main
