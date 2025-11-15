@@ -23,13 +23,22 @@ jobs:
         with:
           go-version: '1.21' # 你可以根据需要更改 Go 版本
 
-      # 步骤 3: 编译 main.go，并将输出文件命名为 main 放在根目录
-      - name: Build
-        run: go build -v -o main main.go
+      # 步骤 3: 编译 Linux 版本
+      - name: Build for Linux
+        run: go build -v -o go-socket-linux main.go
 
-      # 步骤 4: 创建 Release 并上传编译好的程序
+      # 步骤 4: 编译 Windows 版本
+      - name: Build for Windows
+        env:
+          GOOS: windows
+          GOARCH: amd64
+        run: go build -v -o go-socket-windows.exe main.go
+
+      # 步骤 5: 创建 Release 并上传编译好的程序
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          # 要上传的文件路径
-          files: main
+          # 要上传的文件路径，支持通配符
+          files: |
+            go-socket-linux
+            go-socket-windows.exe
