@@ -1,13 +1,14 @@
 # 工作流的名称
-name: Build Go App
+name: Build and Release Go App
 
-# 仅在推送到 main 分支时触发
+# 当一个以 'v' 开头的标签被推送时触发
 on:
   push:
-    branches: [ "main" ]
+    tags:
+      - 'v*' # 例如 v1.0, v1.2.3
 
 jobs:
-  build:
+  build-and-release:
     # 作业在最新的 Ubuntu 运行器上运行
     runs-on: ubuntu-latest
     steps:
@@ -24,11 +25,9 @@ jobs:
       - name: Build
         run: go build -v -o main main.go
 
-      # 步骤 4: 上传编译好的程序作为 artifact
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      # 步骤 4: 创建 Release 并上传编译好的程序
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         with:
-          # artifact 的名称
-          name: go-app
           # 要上传的文件路径
-          path: main
+          files: main
